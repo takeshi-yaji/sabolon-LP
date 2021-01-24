@@ -1,0 +1,1039 @@
+@charset "utf-8";
+
+/*==========================================
+sass
+==========================================*/
+
+//マップ型変数breakpointsを定義
+$breakpoints: (
+//キー　　値
+ 'sm': 'screen and (max-width: 767px)', //767px以下（スマホ）用の表示
+ 'md': 'screen and (min-width: 768px)' //768px以上（タブレット・PC）用の表示
+) !default;
+
+//メディアクエリ用のmixinを定義。デフォ値はmd
+@mixin mq($breakpoint: md) {
+//map-get(マップ型変数, キー)で値を取得
+  @media #{map-get($breakpoints, $breakpoint)} {
+    //この中をカスタムできる
+    @content;
+  }
+}
+
+//使用例
+// .header {
+//   height:100px; //ＰＣ用の表示
+
+//   @include mq(sm) {
+//     height: 60px; //スマホの時だけ高さを60pxに！
+//   }
+// }
+
+// このように @media screen and (max-width: 767px) { } を書かなくても、
+// PC用のcssを書きながらスマホ用の表示を書き足すことができます！ 
+
+/*==========================================
+colors
+==========================================*/
+$primary-color: #3EA1D1;
+$font-color: #333;
+
+
+/*==========================================
+common -全体に共通するスタイル
+==========================================*/
+//スマートフォンの時は表示されない
+@include mq(sm) {
+  .is-pc {
+    display: none;
+  }
+}
+
+//pcの時は表示されない
+@include mq(md) {
+  .is-sp {
+    display: none;
+  }
+}
+
+body {
+  font-size: 16px;
+  color: $font-color;
+  font-family: "ヒラギノ明朝 ProN",serif;
+  line-height: 1.6875;
+}
+
+img {
+  width: 100%;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  box-sizing: content-box;
+
+  @include mq(sm) {
+    padding: 0 15px;
+  }
+}
+
+
+/*==========================================
+header
+==========================================*/
+.header {
+  background: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  .drawer-hamburger {  //ハンバーガーと×ボタンの表示位置の変更
+    .drawer--right & {
+      right: 3px;  //右から3pxの位置に変更（画像のサイズに合わせて統一感を出すためと×ボタンがロゴと被っていたため）
+    }
+  }
+
+  .drawer-hamburger-icon {
+    background: $primary-color;  //ハンバーガーの真ん中の線の色を変更
+
+    .drawer-open & {  //ハンバーガーの色を上書きしてしまったので、ハンバーガーを開いた時に×ボタンの真ん中に線が出てしまう
+      background: transparent;
+    }
+    
+    &::before,
+    &::after {
+      background: $primary-color;  //ハンバーガーの上下の線の色を変更
+    }
+  }
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+
+  @include mq(sm) {
+    height: 60px;
+  }
+}
+
+.header-logo {
+  width: 120px;
+}
+
+.header-nav {
+  margin-left: auto;
+
+  @include mq(sm) {  //ドロワーを中身の記述
+    top: 60px;  //headerロゴと被って見にくいので、位置を調整(drawer-navにfixedが当たっているためtopで位置調整ができる)
+    background: $primary-color;
+    padding: 24px 0;
+  }
+}
+
+.header-nav-list {
+  @include mq(md) {
+    display: flex;
+  }
+}
+
+.header-nav-item {   // 「& + &」 は　.header-nav-item + .header-nav-itemと同じ意味
+  & + & { //一つ目の.header-nav-item（ Concept ）にはmargin-left はいらないので次の.header-nav-itemから適用という意味
+    @include mq(md) { 
+      margin-left: 46px;
+    }
+  }
+}
+
+.header-nav-item-link {
+  display: block;
+  color: $font-color;
+  height: 70px;//クリック領域をheaderの高さいっぱいにとるためaタグに高さ指定
+  line-height: 70px;//クリック領域をheaderの高さいっぱいにとるためaタグに高さ指定
+  letter-spacing: .1em;
+  
+  @include mq(sm) {  //ハンバーガーの中身の変更
+    color: #fff;
+    font-size: 18px;
+    text-align: right;
+    padding: 0 15px;
+    height: 60px;//クリック領域をheaderの高さいっぱいにとるためaタグに高さ指定
+    line-height: 60px;//クリック領域をheaderの高さいっぱいにとるためaタグに高さ指定
+  }
+
+  @include mq(md) {
+    transition: color .4s;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+
+/*==========================================
+main common
+==========================================*/
+
+.main {
+  padding-top: 70px;  //position:fixedで固定されてしまった分の高さを取るため
+
+  @include mq(sm) {
+    padding-top: 60px;
+  }
+}
+
+.section {
+  margin-top: 160px;
+
+  @include mq(sm) {
+    margin-top: 96px;
+  }
+}
+
+/*==========================================
+util-title
+==========================================*/
+
+.util-title {  //見出しの共通クラス
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1;
+
+  @include mq(sm) {
+    font-size: 30px;
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 60px;
+    background: $primary-color;  //ここまでの記述で、、高さ1px、幅60pxの箱で線を表現している
+    margin: 16px auto 0;//この記述で中央寄せ、かつ、上に余白
+  }
+}
+
+.util-link {  //MOREボタンの共通クラス
+  font-size: 14px;
+  letter-spacing: .1em;
+  color: $primary-color;
+  border: solid 1px $primary-color;
+  background: #fff;
+  display: inline-block;  //インラインブロックとすることでリンクを囲っている箱に対して「text-align : center ;」でボタンの位置を調整できる
+  padding: 10px 54px;
+  transition: background-color .4s, color .4s;  //なるべく何に何秒トランジションをかけるかを書く
+
+  &.-active {  //activeクラスを持っているクラスに対してかける
+    background: $primary-color;
+    color: #fff;
+  }
+
+  @include mq(md) {
+    &:not(.-submit) {  //submitのクラスを持っていないutil-linkに対してhoverアクションをかける
+      &:hover {
+        background: $primary-color;
+        color: #fff;
+      }
+    }
+  }
+}
+
+ /*==========================================
+top
+===========================================*/
+
+.top {
+  position: relative;
+}
+
+.top-picture {
+  @include mq(sm) {
+    padding-top: 120%;
+    background: url(../img/sp/top.png) center center / cover;  //画像を上付けと右付けにする記述 / 画像サイズの記述 画像を繰り返さない記述  
+  }
+
+  @include mq(md) { 
+    padding-top: 55%;
+    background: url(../img/top.png) top right / 82.5% no-repeat;  //画像を上付けと右付けにする記述 / 画像サイズの記述 画像を繰り返さない記述
+  }
+}
+
+.top-message {
+  @include mq(sm) {
+    margin-top: 31px;
+  }
+
+  @include mq(md) { 
+    position: absolute;
+    left: 0; //左付にする記述
+    top: 50%;  //画像に載せるテキストの上下を中央寄せにする記述
+    transform: translateY(-50%);  //画像に載せるテキストの上下を中央寄せにする記述
+    background: #fff;
+    padding: 82px 44px 90px 40px;
+  }
+}
+
+.top-message-title {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.top-message-text {
+  margin-top: 18px;
+}
+
+
+/*==========================================
+Concept
+==========================================*/
+
+.concept-inner {
+  margin-top: 64px;
+
+  @include mq(sm) {
+    margin-top: 46px;
+  }
+
+  @include mq(md) {
+    display: flex;
+    align-items: center;
+  }
+} 
+
+.concept-picture {
+  @include mq(md) {
+    //w50%でも良いが、flexを使用しているのでflexのショートハンドで幅の指定
+    flex: 0 0 50%;  //flex:glow;幅が余っている場合に勝手に拡大  flex:shrink;幅が足りなければ勝手に縮小  flex:basis;基本の幅
+  }
+}
+
+.concept-message {
+  @include mq(sm) {
+    margin-top: 35px;
+  }
+
+  @include mq(md) {
+    flex: 0 1 50%;  //flex:glow;幅が余っている場合に勝手に拡大  flex:shrink;幅が足りなければ勝手に縮小  flex:basis;基本の幅
+    margin-left: 6.6667%; //タブレットだと「margin-left」が広くなってしまうので％で指定
+  }
+}
+
+.concept-message-title {
+  font-size: 20px;
+  font-weight: bold;
+
+}
+
+.concept-message-text {
+  margin-top: 36px;
+
+  @include mq(sm) {
+    margin-top: 20px;
+  }
+}
+
+
+/*==========================================
+feature
+==========================================*/
+
+.feature {
+  @include mq(sm) {
+    max-width: 340px;
+  }
+}
+
+.feature-list {
+  margin-top: 64px;
+
+  @include mq(sm) {
+    margin-top: 46px;
+  }
+
+  @include mq(md) {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.feature-item {
+  @include mq(md) {
+    flex: 0 0 28.3333%;
+  }
+
+  & + & {
+    @include mq(sm) {
+      margin-top: 49px;
+    }
+  }
+}
+
+.feature-item-link {
+  display: block;
+  color: $font-color;
+  background: #fff;
+  box-shadow: 3px 3px 15px rgba(96, 96, 96, 0.16);
+
+
+  @include mq(md) { 
+    &:hover {  //feature-item-linkにホバーした時に
+      .feature-item-picture > img {  //feature-item-linkがフワッと浮き上がるアニメーション
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
+.feature-item-picture {
+  overflow: hidden;  //アニメーションがはみ出した時に隠す記述
+
+  > img {
+    transition: transform .4s;  //feature-item-linkがフワッと浮き上がるアニメーション
+  }
+}
+
+.feature-item-body {
+  text-align: center;
+  font-weight: bold;
+  padding: 26px 12px;
+}
+
+
+/*==========================================
+about
+==========================================*/
+
+.about {
+  color: #fff;
+  position: relative;
+  padding: 120px 0;
+
+  @include mq(sm) {
+    background: url(../img/sp/bg.png) center center / cover;
+    padding: 176px 0 52px;
+  }
+
+  @include mq(md) { 
+    background: url(../img/bg.png) center center / cover;
+  }
+
+  &::before {  //画像が明るすぎるためaboutの画像に薄黒いレイヤーをかける
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.12);
+  }
+}
+
+.about-inner {
+  position: relative;  //この記述によってtextには薄黒いレイヤーがかからない
+}
+
+.about-title {
+  font-style: 22px;
+  font-weight: bold;
+
+  @include mq(sm) {
+    font-size: 20px;
+  }
+}
+
+.about-text {
+  margin-top: 28px;
+
+  @include mq(sm) {
+    font-size: 14px;
+    margin-top: 22px;
+    line-height: 1.7143;
+  }
+}
+
+/*==========================================
+Products
+==========================================*/
+
+.products {
+  max-width: 940px;
+
+  @include mq(sm) {
+    max-width: 340px;
+    padding: 0 58px;
+  }
+}
+
+.products-list {
+  margin-top: 64px;
+
+  @include mq(sm) {
+    margin-top: 46px;
+  }
+
+  @include mq(md) {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.products-item {
+  & + & {
+    @include mq(sm) {
+      margin-top: 40px;
+    }
+  }
+
+  @include mq(md) {
+    flex: 0 0 27.6%;
+  }
+}
+
+.products-item-link {
+  display: block;
+  color: $font-color;
+  font-size: 14px;
+
+  @include mq(md) { 
+    &:hover {  //feature-item-linkにホバーした時に
+      .products-item-picture > img {  //feature-item-linkがフワッと浮き上がるアニメーション
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
+.products-item-picture {
+  overflow: hidden;  //アニメーションがはみ出した時に隠す記述
+
+  > img {
+    transition: transform .4s;  //feature-item-linkがフワッと浮き上がるアニメーション
+  }
+}
+
+.products-item-body {
+  margin-top: 22px;
+}
+
+.products-item-cost {
+  color: #989898;
+  margin-top: 10px;
+}
+
+.products-footer {
+  text-align: center;
+  margin-top: 44px;
+
+  @include mq(sm) {
+    margin-top: 42px;
+  }
+}
+
+
+/*==========================================
+News
+==========================================*/
+
+.news {
+  max-width: 1040px;
+
+  @include mq(sm) {
+    padding: 0 32px;
+  }
+}
+
+.news-list {
+  margin-top: 28px;
+
+  @include mq(sm) {
+    margin-top: 25px;
+  }
+}
+
+.news-item {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.news-item-link {
+  color: $font-color;
+  font-size: 14px;
+  padding: 22px 0;
+  display: block;  //display: flexをmdに入れてしまったので、この記述でpaddingが聞くようになる
+
+  @include mq(md) {
+    display: flex;
+    align-items: center;
+    
+    &:hover {
+      .news-item-picture > img {
+        transform: translate(-50%, -50%) scale(1.05);  //画像にホバーしたときのアニメーションの記述は順番が大事
+      }
+    }
+  }
+
+}
+
+.news-item-header {
+  @include mq() {
+    flex: 0 0 260px;
+  }
+}
+
+.news-item-picture {
+  background: #000;
+  padding-top: 61.5385%;
+  position: relative;
+  overflow: hidden;
+
+  > img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    transition: transform .4s;
+  }
+  
+}
+
+.news-item-body {
+  @include mq(sm) {
+    margin-top: 21px;
+  }
+
+  @include mq(md) {
+    flex: 0 1 100%;
+    margin-left: 40px;
+  }
+}
+
+.news-item-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 4px;
+
+  @include mq(sm) {
+    font-size: 16px;
+  }
+}
+
+.news-item-text {
+  color: #888;
+  margin-top: 16px;
+  line-height: 1.7143;
+}
+
+.news-footer {
+  text-align: center;
+  margin-top: 48px;
+}
+
+/*==========================================
+Concept2
+==========================================*/
+
+.concept2-inner {
+
+  @include mq(md) { 
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+  }
+} 
+
+.concept2-picture {
+  @include mq(md) {
+    //w50%でも良いが、flexを使用しているのでflexのショートハンドで幅の指定
+    flex: 0 0 50%;  //flex:glow;幅が余っている場合に勝手に拡大  flex:shrink;幅が足りなければ勝手に縮小  flex:basis;基本の幅
+  }
+}
+
+.concept2-message {
+  @include mq(sm) {
+    margin-top: 34px;
+  }
+
+  @include mq(md) {
+    flex: 0 1 50%;  //flex:glow;幅が余っている場合に勝手に拡大  flex:shrink;幅が足りなければ勝手に縮小  flex:basis;基本の幅
+    margin-right: 6.6667%; //タブレットだと「margin-left」が広くなってしまうので％で指定
+  }
+}
+
+.concept2-message-title {
+  font-size: 28px;
+  font-weight: bold;
+
+  @include mq(sm) {
+    font-size: 20px;
+  }
+
+}
+
+.concept2-message-text {
+  margin-top: 30px;
+
+  @include mq(sm) {
+    font-size: 14px;
+    line-height: 1.7143;
+  }
+}
+
+
+/*==========================================
+Contact
+==========================================*/
+
+.contact {
+  background: url(../img/contact.png) center center / cover;
+  margin-top: 225px;
+  padding: 72px 40px 86px;  //paddingの左右はinnerで指定したサイズを指定して統一
+
+  @include mq(sm) {
+    margin-top: 92px;
+    padding: 56px 28px;
+  }
+
+  .util-title {
+    color: $primary-color;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  textarea {
+    width: 100%; //横幅いっぱいにしたいため
+    border: 0;
+    font-size: 16px;
+    padding: .2em .5em;
+    box-shadow: 5px 6px 15px rgba(96, 96, 96, 0.16);
+    border-radius: 2px;
+  }
+  
+  input[type="text"],
+  input[type="email"] {
+    height: 40px;
+  }
+  
+  textarea {
+    min-height: 122px;
+    resize: vertical; //textareaの横幅のサイズを変えられないようにする記述
+  }
+}
+
+.contact-form {
+  margin-top: 56px;
+
+  @include mq(sm) {
+    margin-top: 26px;
+  }
+}
+
+.contact-text {
+  font-size: 14px;
+  letter-spacing: .1em;
+  text-align: center;
+}
+
+.contact-text-inline {
+  font-size: 16px;
+  color: #E7728E;
+}
+
+.contact-list {
+  max-width: 510px;  //最大幅を決めてあげて、
+  margin: 18px auto 0;  //左右中央揃え、上との間隔を開ける
+}
+
+.contact-item {
+  @include mq(md) { 
+    display: flex;
+  }
+
+  & + & {
+    margin-top: 32px;  //２個目のアイテムからmargin-topを当てる
+  }
+}
+
+.contact-item-title {
+  background: rgba(62, 161, 209, 0.7);
+  color: #fff;
+  font-size: 18px;
+  height: 40px;  //inputの高さと同じなどで、合わせる
+  line-height: 40px;  //高さと同じ値を入れることで、行の高さが中央になる
+  text-align: center;
+  padding-left: 10px;
+  position: relative;
+
+  @include mq(sm) {
+    display: inline-block;
+    font-size: 14px;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 16px;
+  }
+  
+  @include mq(md) { 
+    flex: 0 1 100%;  //.contact-item-inputの幅を設定してから、titleの幅を余りの100％とすることで最大幅510pxの中で揃う
+  }
+
+  @include mq(md) {
+    &::after {  //titleのトンガリを表現
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;  //トンガリの上からの位置指定
+      right: -8px;  //トンガリの右からの位置指定
+      border-style: solid;
+      border-width: 20px 0 20px 8px;
+      border-color: transparent transparent transparent rgba(62, 161, 209, 0.7);
+    }
+  }
+}
+
+.contact-item-title-inline {
+  font-size: 12px;
+  color: #E7728E;
+  vertical-align: super;  //この記述でアスタリスクの位置を上に配置。ただし、textがしたに下がってしまう
+  line-height: 1;  //line-heightに40pxがかかっていることで文字が下がってしまうので、inlineに対してのみ1を指定する
+
+  @include mq(sm) {
+    font-size: 10px;
+  }
+}
+
+.contact-item-input {
+  @include mq(sm) {
+    margin-top: 3px;
+  }
+
+  @include mq(md) { 
+    flex: 0 0 320px;  //inputの横幅を指定
+    margin-left: 18px;
+  }
+}
+
+.contact-radio-wrap {
+  display: inline-flex;  //flexだとブロック要素となるので横幅いっぱいがラジオボタンになってしまう。なのでinline-flexにして要素内の大きさにする
+  border: solid 1px #fff;
+  border-radius: 1px;
+  box-shadow: 5px 6px 15px rgba(96, 96, 96, 0.16);
+}
+
+.contact-radio {
+  position: relative;  //この記述でラジオボタンを浮かせる
+}
+
+.contact-radio-input {
+  position: absolute;  //この記述で既存のラジオボタンを浮かせる
+  top: 0;
+  left: 0;
+  opacity: 0;  //この記述でラジオボタンを隠す記述。要はpositionで浮かせて、opacityで隠すことで新しいラジオボタンを作りかつtabキーで選択できるボタンの作成
+
+  &:checked + .contact-radio-part {  //.contact-radio-inputの次の.contact-radio-partに対する記述
+    background: $primary-color;
+    color: #fff;
+    border-radius: 1px;
+  }
+
+  &:focus + .contact-radio-part {  //.contact-radio-inputの次の.contact-radio-partにフォーカスが当たった時に対する記述。
+    outline: -webkit-focus-ring-color auto 1px;  //要はこの記述でtabキーで入力欄の移動した時にフォーカスが当たるようになる
+  }
+}
+
+.contact-radio-part {
+  display: block;
+  background: #fff;
+  color: $primary-color;
+  height: 38px;
+  line-height: 38px;
+  width: 80px;
+  text-align: center;
+  transition: background-color .4s, color .4s;
+}
+
+.contact-privacy-link {
+  color: $primary-color;
+  text-decoration: underline;
+}
+
+.contact-footer {
+  text-align: center;
+  margin-top: 20px;
+
+  @include mq(sm) {
+    margin-top: 14px;
+  }
+}
+
+.contact-footer-submit {
+  margin-top: 46px;
+
+  @include mq(sm) {
+    margin-top: 24px;
+  }
+}
+
+.contact-privacy {
+  position: relative;
+  height: 22px;  //.contact-privacy-partと同じサイズにすることで
+  width: 22px;   //チェックボックスがチェックされたときの文字ずれを解消する記述。
+  display: inline-block;  //要はチェックボックス全体を囲う箱のため、チェックボックスが動くとその分、動くので、チェックボックスと同じサイズにしズレを解消
+  vertical-align: middle;  //inline要素、inline-block要素の上下中央寄せの記述
+}
+
+.contact-privacy-part {
+  display: inline-block;  //display:block;にすると、左端に表示されるため、inline-blockで横並びになるようにする
+  height: 22px;
+  width: 22px;
+  border: solid 1px $primary-color;
+  background: #fff;
+  position: absolute;  //矢印の位置指定
+  top: 0;  //矢印の位置指定
+  left: 0; //矢印の位置指定
+
+  transition: all .2s; //checkボックスのアニメーションのスピード
+}
+
+.contact-privacy-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+
+  &:checked + .contact-privacy-part {
+    width: 10px;
+    border-top: 0;
+    border-left: 0;
+    background: transparent; //背景色を透明に。元々の背景色を透明にする記述
+    transform: rotate(45deg);  //回転するアニメーションの記述。45度回転する記述
+    top: -5px;  //矢印が上から少しずれる記述
+    left: 5px;  //矢印が左から少しずれる記述
+  }
+
+  &:focus + .contact-privacy-part {  //.contact-radio-inputの次の.contact-radio-partにフォーカスが当たった時に対する記述。
+    outline: -webkit-focus-ring-color auto 1px;  //要はこの記述でtabキーで入力欄の移動した時にフォーカスが当たるようになる
+  }
+
+  &:checked:focus + .contact-privacy-part {  //.contact-radio-inputの次の.contact-radio-partにフォーカスが当たった時に対する記述。
+    outline: none;  //この記述でtabキーで入力欄の移動した時にチェックされている時はフォーカスが当たらないようになる
+  }
+}
+
+.contact-message {
+  text-align: center;
+  margin-top: 60px;
+  font-size: 26px;
+  display: none;
+
+  &.-error {
+    color: #f00;
+  }
+}
+
+
+
+
+/*==========================================
+footer
+==========================================*/
+
+.footer {
+  background: #F7F7F7;
+  padding: 42px 40px 12px;
+
+  @include mq(sm) {
+    padding: 36px 0 14px;
+  }
+}
+
+.footer-logo {
+  width: 120px;
+  margin: 0 auto;
+}
+
+.footer-nav-list {
+  margin-top: 8px;
+
+  @include mq(sm) {
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  @include mq(md) {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.footer-nav-item {
+  & + & {
+    @include mq(md) {
+      margin-left: 30px; //一つ目の一つ目の要素にはmargin-leftがいらないので、２つ目から適用
+    }
+  }
+}
+
+.footer-nav-item-link {
+  font-size: 12px;
+  color: $font-color;
+  display: block;  //リンク領域を広げるためにブロック要素にする記述
+  padding: 1em 0;  //linkのクリック領域を広げるための高さの記述。44pxが良いとされている
+
+  @include mq(sm) {
+    padding: .3em 0;
+  }
+
+  @include mq(md) {
+    transition: opacity .4s;
+
+    &:hover {
+      opacity: .7;
+    }
+  }
+}
+
+.footer-sns-list {
+  text-align: center;
+
+  @include mq(sm) {
+    margin-top: 14px;
+  }
+}
+
+.footer-sns-item {
+  display: inline-block;
+
+  & + & {
+    margin-left: 10px;
+  }
+}
+
+.footer-sns-item-link {
+  color: $primary-color;
+  font-size: 24px;  //画像サイズの変更
+  display: block;  //クリック領域を変更するための記述
+  padding: .1em .5em;  //クリック領域を広げるための記述
+
+  @include mq(md) {
+    transition: opacity .4s;
+    
+    &:hover {
+      opacity: .7;
+    }
+  }
+}
+
+.footer-copyright {
+  color: #888;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 10px;
+
+  @include mq(sm) {
+    margin-top: 5px;
+  }
+}
